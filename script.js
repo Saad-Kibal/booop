@@ -15,6 +15,8 @@ const replayConfirmation = document.getElementById('replay-confirmation');
 const confirmReplay = document.getElementById('confirmReplay');
 const cancelReplay = document.getElementById('cancelReplay');
 const SECRET_PASSWORD = "cutiepie123";
+let musicPausedForFinalPage = false;
+let celebrationInProgress = false;
 const pageDecorations = [
   ['🌸', '🦋', '✨', '💌'],
   ['🐻', '🍓', '💖', '🌷'],
@@ -77,7 +79,10 @@ function updatePages(direction = 1, previousPage = null) {
 
   // Trigger Confetti on last page
   if (currentPage === pages.length - 1) {
+    pauseMusicForFinalPage();
     launchConfetti();
+  } else if (!celebrationInProgress) {
+    resumeBackgroundMusic();
   }
 }
 
@@ -145,6 +150,22 @@ function handleEnvelopeKeydown(event) {
   }
 }
 
+function pauseMusicForFinalPage() {
+  if (bgMusic && !bgMusic.paused) {
+    bgMusic.pause();
+    musicPausedForFinalPage = true;
+  }
+}
+
+function resumeBackgroundMusic() {
+  if (!bgMusic || !musicPausedForFinalPage) {
+    return;
+  }
+
+  musicPausedForFinalPage = false;
+  bgMusic.play().catch(() => {});
+}
+
 function launchConfetti() {
   const duration = 3 * 1000;
   const end = Date.now() + duration;
@@ -169,15 +190,25 @@ function launchConfetti() {
   }());
 }
 
-function playCelebrationSound() {
+function playCelebrationSound(onComplete) {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
 
   if (!AudioContext) {
+    onComplete?.();
     return;
   }
 
   const audioContext = new AudioContext();
   const startTime = audioContext.currentTime;
+  let celebrationFinished = false;
+  const finishCelebration = () => {
+    if (celebrationFinished) {
+      return;
+    }
+
+    celebrationFinished = true;
+    onComplete?.();
+  };
   const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
   const noiseData = noiseBuffer.getChannelData(0);
 
@@ -234,10 +265,15 @@ function playCelebrationSound() {
       greeting.rate = 0.9;
       greeting.pitch = 1.15;
       greeting.volume = 1;
+      greeting.onend = finishCelebration;
+      greeting.onerror = finishCelebration;
       window.speechSynthesis.speak(greeting);
+    } else {
+      finishCelebration();
     }
   }, greetingDelay);
 
+  setTimeout(finishCelebration, greetingDelay + 2500);
   setTimeout(() => audioContext.close(), greetingDelay + 1800);
 }
 
@@ -249,16 +285,21 @@ function makeWish() {
   wishMessage.hidden = false;
   wishScene?.classList.add('wished');
   document.body.classList.add('candle-out');
+  celebrationInProgress = true;
   wishBtn.disabled = true;
   wishBtn.innerText = "Wish sent 💖";
   nextBtn.disabled = false;
   nextBtn.innerText = "Replay 🎉";
-  playCelebrationSound();
+  playCelebrationSound(() => {
+    celebrationInProgress = false;
+    resumeBackgroundMusic();
+  });
   launchConfetti();
 }
 
 function resetWish() {
   window.speechSynthesis?.cancel();
+  celebrationInProgress = false;
   document.body.classList.remove('candle-out');
   wishScene?.classList.remove('wished');
 
@@ -270,6 +311,8 @@ function resetWish() {
     wishBtn.disabled = false;
     wishBtn.innerText = "Make a wish ✨";
   }
+
+  resumeBackgroundMusic();
 }
 
 function unlockCard() {
@@ -280,7 +323,7 @@ function unlockCard() {
     document.body.classList.add('birthday-mode');
 
     if (bgMusic) {
-        bgMusic.volume = 0.6;
+      bgMusic.volume = 0.3;
         bgMusic.play().catch(err => console.log("Audio playback error:", err));
     }
 
