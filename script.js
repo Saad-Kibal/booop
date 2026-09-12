@@ -169,6 +169,78 @@ function launchConfetti() {
   }());
 }
 
+function playCelebrationSound() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContext) {
+    return;
+  }
+
+  const audioContext = new AudioContext();
+  const startTime = audioContext.currentTime;
+  const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+
+  for (let index = 0; index < noiseData.length; index += 1) {
+    noiseData[index] = Math.random() * 2 - 1;
+  }
+
+  let clapTime = startTime;
+  for (let clap = 0; clap < 13; clap += 1) {
+    const source = audioContext.createBufferSource();
+    const filter = audioContext.createBiquadFilter();
+    const pan = audioContext.createStereoPanner ? audioContext.createStereoPanner() : null;
+    const gain = audioContext.createGain();
+    const clapVolume = 0.2 + Math.random() * 0.16;
+
+    source.buffer = noiseBuffer;
+    filter.type = 'bandpass';
+    filter.frequency.value = 1300 + Math.random() * 1600;
+    filter.Q.value = 0.7 + Math.random() * 0.8;
+    gain.gain.setValueAtTime(0.0001, clapTime);
+    gain.gain.exponentialRampToValueAtTime(clapVolume, clapTime + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, clapTime + 0.085);
+
+    if (pan) {
+      pan.pan.value = -0.65 + Math.random() * 1.3;
+      source.connect(filter).connect(pan).connect(gain).connect(audioContext.destination);
+    } else {
+      source.connect(filter).connect(gain).connect(audioContext.destination);
+    }
+
+    source.start(clapTime);
+    source.stop(clapTime + 0.1);
+    clapTime += 0.09 + Math.random() * 0.1;
+  }
+
+  const woo = audioContext.createOscillator();
+  const wooGain = audioContext.createGain();
+  const wooTime = clapTime + 0.15;
+
+  woo.type = 'sine';
+  woo.frequency.setValueAtTime(280, wooTime);
+  woo.frequency.exponentialRampToValueAtTime(560, wooTime + 0.42);
+  wooGain.gain.setValueAtTime(0.0001, wooTime);
+  wooGain.gain.exponentialRampToValueAtTime(0.18, wooTime + 0.06);
+  wooGain.gain.exponentialRampToValueAtTime(0.0001, wooTime + 0.5);
+  woo.connect(wooGain).connect(audioContext.destination);
+  woo.start(wooTime);
+  woo.stop(wooTime + 0.52);
+
+  const greetingDelay = (wooTime - startTime + 0.75) * 1000;
+  setTimeout(() => {
+    if ('speechSynthesis' in window) {
+      const greeting = new SpeechSynthesisUtterance('Happy birthday!');
+      greeting.rate = 0.9;
+      greeting.pitch = 1.15;
+      greeting.volume = 1;
+      window.speechSynthesis.speak(greeting);
+    }
+  }, greetingDelay);
+
+  setTimeout(() => audioContext.close(), greetingDelay + 1800);
+}
+
 function makeWish() {
   if (!wishBtn || !wishMessage) {
     return;
@@ -181,10 +253,12 @@ function makeWish() {
   wishBtn.innerText = "Wish sent 💖";
   nextBtn.disabled = false;
   nextBtn.innerText = "Replay 🎉";
+  playCelebrationSound();
   launchConfetti();
 }
 
 function resetWish() {
+  window.speechSynthesis?.cancel();
   document.body.classList.remove('candle-out');
   wishScene?.classList.remove('wished');
 
