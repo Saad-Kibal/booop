@@ -8,6 +8,7 @@ const passInput = document.getElementById('passInput');
 const unlockBtn = document.getElementById('unlockBtn');
 const lockScreen = document.getElementById('lock-screen');
 const bgMusic = document.getElementById('bg-music');
+const wishSound = document.getElementById('wish-sound');
 const wishBtn = document.getElementById('wishBtn');
 const wishMessage = document.getElementById('wishMessage');
 const wishScene = document.getElementById('wishScene');
@@ -16,6 +17,7 @@ const confirmReplay = document.getElementById('confirmReplay');
 const cancelReplay = document.getElementById('cancelReplay');
 const SECRET_PASSWORD = "cutiepie123";
 let musicPausedForFinalPage = false;
+let musicFadeFrame = null;
 let celebrationInProgress = false;
 const pageDecorations = [
   ['🌸', '🦋', '✨', '💌'],
@@ -153,10 +155,30 @@ function handleEnvelopeKeydown(event) {
 }
 
 function pauseMusicForFinalPage() {
-  if (bgMusic && !bgMusic.paused) {
-    bgMusic.pause();
-    musicPausedForFinalPage = true;
+  if (!bgMusic || bgMusic.paused || musicPausedForFinalPage) {
+    return;
   }
+
+  musicPausedForFinalPage = true;
+  const startingVolume = bgMusic.volume;
+  const fadeStart = performance.now();
+  const fadeDuration = 1200;
+
+  const fadeOut = (currentTime) => {
+    const progress = Math.min((currentTime - fadeStart) / fadeDuration, 1);
+    bgMusic.volume = startingVolume * (1 - progress);
+
+    if (progress < 1) {
+      musicFadeFrame = requestAnimationFrame(fadeOut);
+      return;
+    }
+
+    bgMusic.pause();
+    bgMusic.volume = startingVolume;
+    musicFadeFrame = null;
+  };
+
+  musicFadeFrame = requestAnimationFrame(fadeOut);
 }
 
 function resumeBackgroundMusic() {
@@ -164,7 +186,13 @@ function resumeBackgroundMusic() {
     return;
   }
 
+  if (musicFadeFrame !== null) {
+    cancelAnimationFrame(musicFadeFrame);
+    musicFadeFrame = null;
+  }
+
   musicPausedForFinalPage = false;
+  bgMusic.volume = 0.3;
   bgMusic.play().catch(() => {});
 }
 
@@ -292,6 +320,10 @@ function makeWish() {
   wishBtn.innerText = "Wish sent 💖";
   nextBtn.disabled = false;
   nextBtn.innerText = "Replay 🎉";
+  if (wishSound) {
+    wishSound.currentTime = 0;
+    wishSound.play().catch(() => {});
+  }
   playCelebrationSound(() => {
     celebrationInProgress = false;
     resumeBackgroundMusic();
