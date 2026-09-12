@@ -18,6 +18,7 @@ const cancelReplay = document.getElementById('cancelReplay');
 const SECRET_PASSWORD = "cutiepie123";
 let musicPausedForFinalPage = false;
 let musicFadeFrame = null;
+let wishResumeTimeout = null;
 let celebrationInProgress = false;
 const pageDecorations = [
   ['🌸', '🦋', '✨', '💌'],
@@ -196,6 +197,18 @@ function resumeBackgroundMusic() {
   bgMusic.play().catch(() => {});
 }
 
+function resumeMusicAfterWishSound() {
+  if (wishResumeTimeout !== null) {
+    clearTimeout(wishResumeTimeout);
+  }
+
+  wishResumeTimeout = setTimeout(() => {
+    wishResumeTimeout = null;
+    celebrationInProgress = false;
+    resumeBackgroundMusic();
+  }, 3000);
+}
+
 function launchConfetti() {
   const duration = 3 * 1000;
   const end = Date.now() + duration;
@@ -322,17 +335,32 @@ function makeWish() {
   nextBtn.innerText = "Replay 🎉";
   if (wishSound) {
     wishSound.currentTime = 0;
-    wishSound.play().catch(() => {});
+    wishSound.onended = () => {
+      wishSound.onended = null;
+      resumeMusicAfterWishSound();
+    };
+    wishSound.play().catch(() => {
+      wishSound.onended = null;
+      resumeMusicAfterWishSound();
+    });
+  } else {
+    resumeMusicAfterWishSound();
   }
-  playCelebrationSound(() => {
-    celebrationInProgress = false;
-    resumeBackgroundMusic();
-  });
+  playCelebrationSound();
   launchConfetti();
 }
 
 function resetWish() {
   window.speechSynthesis?.cancel();
+  if (wishResumeTimeout !== null) {
+    clearTimeout(wishResumeTimeout);
+    wishResumeTimeout = null;
+  }
+  if (wishSound) {
+    wishSound.onended = null;
+    wishSound.pause();
+    wishSound.currentTime = 0;
+  }
   celebrationInProgress = false;
   document.body.classList.remove('candle-out');
   wishScene?.classList.remove('wished');
