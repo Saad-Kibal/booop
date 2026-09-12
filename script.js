@@ -66,7 +66,7 @@ function launchConfetti() {
 }
 
 // SET YOUR DESIRED PASSWORD HERE
-const SECRET_PASSWORD = "cutiepie";
+const SECRET_PASSWORD = "cutiepie123";
 
 function unlockCard() {
   const input = document.getElementById('passInput').value.trim();
