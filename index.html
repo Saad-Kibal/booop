@@ -14,67 +14,106 @@
 
   <div class="card-container">
 
-    <!-- PASSWORD OVERLAY (Keeps the surprise hidden) -->
     <div id="lock-screen">
-      <h2>🔒 Special Access</h2>
-      <p>Enter the passcode to unlock your message:</p>
-      <input type="password" id="passInput" placeholder="Enter password...">
-      <button onclick="unlockCard()">Unlock</button>
-      <p id="errorMsg"></p>
+      <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open birthday envelope" aria-controls="passInput">
+        <div class="envelope-back"></div>
+        <div class="envelope-letter">
+          <h2>🔒 Special Access</h2>
+          <p>Enter the passcode to unlock your message:</p>
+          <input type="password" id="passInput" placeholder="Enter password...">
+          <button id="unlockBtn" type="button">Unlock</button>
+          <p id="errorMsg"></p>
+        </div>
+        <div class="envelope-front"></div>
+        <div class="envelope-flap"></div>
+        <span class="envelope-heart" aria-hidden="true">♥</span>
+        <span class="envelope-hint">Click me</span>
+      </div>
     </div>
 
-    <!-- PAGE 1: Intro Message -->
     <div class="page active">
       <h1>Happy Birthday Marina!!! 🎉</h1>
-      <p>Today is all about celebrating you—the person who brings so much brightness, laughter, and warmth into my world. I put together this little digital card to remind you just how deeply you are loved. Take a deep breath, click "Next," and enjoy your special walkthrough!</p>
+      <p>Today is your day, so I made you a tiny birthday adventure to open one page at a time. No big speech to start with—just a reminder that you deserve to feel celebrated, spoiled, and very loved. now..press next to march on our little adventure !!!</p>
     </div>
 
-    <!-- PAGE 2: Text Message -->
     <div class="page">
       <h1>To My Favorite Person  ✨</h1>
-      <p>I just wanted to take a moment to remind you how deeply you are loved and appreciated. Your smile lights up every room you walk into, and your kindness makes the world feel so much softer and brighter.</p>
+      <p>Somehow, you make being yourself look effortless and unforgettable. I love your warmth, your strange little habits, and the way even a normal day feels better when you are part of it.</p>
     </div>
 
-    <!-- PAGE 3: Text Message -->
     <div class="page">
       <h1>Moments I’ll Treasure Forever 💭</h1>
-      <p>From late-night conversations to all our small inside jokes, every single moment shared with you is a core memory. Thank you for all the shared laughs, the cozy silence, and every adventure in between. Life is so much richer with you by my side.</p>
+      <p>The best memories are not always the grand ones. They are the late conversations, the shared looks, the silly jokes that would make no sense to anyone else, and the quiet moments that somehow mean everything.</p>
     </div>
 
-    <!-- PAGE 4: Text Message -->
     <div class="page">
       <h1>Here’s to Your Next Chapter 🌟</h1>
-      <p>As you start another year, my biggest wish for you is boundless happiness, peace of mind, and the confidence to chase every dream you have. May this year bring you all the success, joy, and gentle moments you deserve so deeply.</p>
+      <p>For this next year, I hope you say yes to the things that excite you, walk away from what drains you, and remember how capable you are. I hope life surprises you in the gentlest, happiest ways.</p>
     </div>
 
-    <!-- PAGE 5: Text Message -->
     <div class="page">
       <h1>Always in Your Corner 🤝</h1>
-      <p>No matter where life takes us or what challenges come up, remember that I am always here to support you, cheer for you, and celebrate every win with you. You’re my favorite partner, my best friend, and my favorite part of every day.</p>
+      <p>On the easy days and the ridiculous ones, I want to be the person you can count on. I will cheer loudly, listen properly, bring snacks when necessary, and stand beside you through every version of life.</p>
     </div>
 
     <div class="page">
       <h1>You're My Favorite Plot Twist 💫</h1>
-      <p>Out of all the crazy twists and turns in this life, finding you was by far the best one. You make even the ordinary days feel like an absolute adventure.</p>
-      <p>I love you more than words can express—and considering how much I talk, that is saying a whole lot! Thank you for being my favorite person to annoy, laugh with, and cherish forever.</p>
+      <p>I did not see you coming, but now I cannot imagine the story without you in it. You are my favorite surprise, my favorite conversation, and the person I most enjoy being completely ridiculous with.</p>
+      <p>Thank you for choosing me, laughing at my nonsense, and making love feel like something warm, funny, and wonderfully real.</p>
     </div>
 
-    <!-- PAGE 6: Final Wish + ONLY IMAGE + Confetti Trigger -->
+    <div class="page">
+      <h1>Little Things I Love About You 💗</h1>
+      <p class="intro-note">A tiny list, because I could never fit everything into one card.</p>
+      <div class="love-notes">
+        <div class="love-note">
+          <span>01</span>
+          <p>Your laugh, especially when you try very hard not to laugh.</p>
+        </div>
+        <div class="love-note">
+          <span>02</span>
+          <p>The way you make ordinary days feel like our own little adventure.</p>
+        </div>
+        <div class="love-note">
+          <span>03</span>
+          <p>How being with you feels like my favorite place to be.</p>
+        </div>
+      </div>
+    </div>
+
     <div class="page">
       <h1>Happy Birthday! ❤️</h1>
-      <!-- REPLACE 'xxxx' IN src WITH YOUR IMAGE FILE OR URL -->
       <img src="resources/birthday.png" alt="doodle of Marina" class="image-box">
       <p>Here’s to another wonderful year around the sun together. I love you more than words can say. Now, let’s go celebrate! 🥳🎉</p>
+      <div class="wish-scene" id="wishScene" aria-label="Birthday candle">
+        <div class="candle">
+          <span class="candle-flame" aria-hidden="true"></span>
+          <span class="candle-wick" aria-hidden="true"></span>
+          <span class="candle-body" aria-hidden="true"></span>
+          <span class="candle-base" aria-hidden="true"></span>
+          <span class="candle-smoke" aria-hidden="true"></span>
+        </div>
+      </div>
+      <button id="wishBtn" class="wish-button" type="button">Make a wish ✨</button>
+      <p id="wishMessage" class="wish-message" aria-live="polite" hidden>Wish made. Now come here and let me celebrate you properly 💖</p>
     </div>
 
-    <!-- Navigation Footer -->
+    <div id="replay-confirmation" class="replay-confirmation" role="dialog" aria-modal="true" aria-labelledby="replayTitle" hidden>
+      <span class="replay-sparkle" aria-hidden="true">✦</span>
+      <h1 id="replayTitle">Replay our little adventure? 💌</h1>
+      <p>Do you want to start the birthday surprise from the beginning?</p>
+      <div class="replay-actions">
+        <button id="confirmReplay" class="wish-button" type="button">Yes, replay ✨</button>
+        <button id="cancelReplay" class="replay-no" type="button">No, close card 💗</button>
+      </div>
+    </div>
+
     <div class="nav-controls">
-      <button id="prevBtn" onclick="changePage(-1)" disabled>Back</button>
+      <button id="prevBtn" type="button" disabled>Back</button>
       <span class="page-indicator" id="pageIndicator">Page 1 of 7</span>
-      <button id="nextBtn" onclick="changePage(1)">Next ➔</button>
+      <button id="nextBtn" type="button">Next ➔</button>
     </div>
 
-    <!-- HTML5 Audio Player -->
     <audio id="bg-music" src="resources/block-of-flats-feat-static-dress.mp3" preload="auto"></audio>
 
   </div>
