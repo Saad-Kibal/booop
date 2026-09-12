@@ -15,11 +15,35 @@ const wishScene = document.getElementById('wishScene');
 const replayConfirmation = document.getElementById('replay-confirmation');
 const confirmReplay = document.getElementById('confirmReplay');
 const cancelReplay = document.getElementById('cancelReplay');
+const countdownDays = document.getElementById('countdownDays');
+const countdownHours = document.getElementById('countdownHours');
+const countdownMinutes = document.getElementById('countdownMinutes');
+const countdownSeconds = document.getElementById('countdownSeconds');
 const SECRET_PASSWORD = "cutiepie123";
+const ADMIN_PASSWORD = "birthdaytime123";
+const birthdayStart = new Date(2026, 8, 15, 0, 0, 0);
 let musicPausedForFinalPage = false;
 let musicFadeFrame = null;
 let wishResumeTimeout = null;
 let celebrationInProgress = false;
+
+function updateCountdown() {
+  const remainingMilliseconds = Math.max(0, birthdayStart.getTime() - Date.now());
+  const totalSeconds = Math.floor(remainingMilliseconds / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  countdownDays.textContent = days;
+  countdownHours.textContent = String(hours).padStart(2, '0');
+  countdownMinutes.textContent = String(minutes).padStart(2, '0');
+  countdownSeconds.textContent = String(seconds).padStart(2, '0');
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
 const pageDecorations = [
   ['🌸', '🦋', '✨', '💌'],
   ['🐻', '🍓', '💖', '🌷'],
@@ -380,8 +404,16 @@ function resetWish() {
 function unlockCard() {
   const input = passInput.value.trim();
   const errorMsg = document.getElementById('errorMsg');
+  const isAdmin = input === ADMIN_PASSWORD;
 
-  if (input === SECRET_PASSWORD) {
+  if (input === SECRET_PASSWORD || isAdmin) {
+    if (!isAdmin && Date.now() < birthdayStart.getTime()) {
+      if (errorMsg) {
+        errorMsg.innerText = "The letter opens when the countdown reaches zero..wait a little :3 ❤️";
+      }
+      return;
+    }
+
     document.body.classList.add('birthday-mode');
 
     if (bgMusic) {
@@ -401,7 +433,7 @@ function unlockCard() {
     }
   } else {
     if (errorMsg) {
-      errorMsg.innerText = "incorrect password baby..wait a little ❤️";
+      errorMsg.innerText = "incorrect password baby..check again :3 ❤️";
     }
   }
 }
