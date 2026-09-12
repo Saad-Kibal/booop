@@ -31,6 +31,8 @@ const pageDecorations = [
 const cornerNames = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
 pages.forEach((page, pageIndex) => {
+  page.classList.add(`page-theme-${pageIndex}`);
+
   pageDecorations[pageIndex].forEach((decoration, decorationIndex) => {
     const corner = document.createElement('span');
     corner.className = `corner-decoration corner-${cornerNames[decorationIndex]}`;
