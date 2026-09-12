@@ -19,6 +19,7 @@ const countdownDays = document.getElementById('countdownDays');
 const countdownHours = document.getElementById('countdownHours');
 const countdownMinutes = document.getElementById('countdownMinutes');
 const countdownSeconds = document.getElementById('countdownSeconds');
+const countdownMilliseconds = document.getElementById('countdownMilliseconds');
 const SECRET_PASSWORD = "cutiepie123";
 const ADMIN_PASSWORD = "birthdaytime123";
 const birthdayStart = new Date(2026, 8, 15, 0, 0, 0);
@@ -34,15 +35,17 @@ function updateCountdown() {
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
+  const milliseconds = remainingMilliseconds % 1000;
 
   countdownDays.textContent = days;
   countdownHours.textContent = String(hours).padStart(2, '0');
   countdownMinutes.textContent = String(minutes).padStart(2, '0');
   countdownSeconds.textContent = String(seconds).padStart(2, '0');
+  countdownMilliseconds.textContent = String(milliseconds).padStart(3, '0');
 }
 
 updateCountdown();
-setInterval(updateCountdown, 1000);
+setInterval(updateCountdown, 50);
 
 const pageDecorations = [
   ['🌸', '🦋', '✨', '💌'],
