@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For you!! ❤️</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+</head>
+<body>
+
+  <div class="card-container">
+
+    <!-- PASSWORD OVERLAY (Keeps the surprise hidden) -->
+    <div id="lock-screen">
+      <h2>🔒 Special Access</h2>
+      <p>Enter the passcode to unlock your message:</p>
+      <input type="password" id="passInput" placeholder="Enter password...">
+      <button onclick="unlockCard()">Unlock</button>
+      <p id="errorMsg"></p>
+    </div>
+
+    <!-- PAGE 1: Intro Message -->
+    <div class="page active">
+      <h1>Happy Birthday Marina!!! 🎉</h1>
+      <p>Today is all about celebrating you—the person who brings so much brightness, laughter, and warmth into my world. I put together this little digital card to remind you just how deeply you are loved. Take a deep breath, click "Next," and enjoy your special walkthrough!</p>
+    </div>
+
+    <!-- PAGE 2: Text Message -->
+    <div class="page">
+      <h1>Reasons You’re One of a Kind ✨</h1>
+      <p>It’s the little things that make me fall for you over and over again. The way your smile lights up a room, your kindness toward everyone (and every pet) around you, and how effortlessly you make the hardest days feel lighter. You have a heart of absolute gold.</p>
+    </div>
+
+    <!-- PAGE 3: Text Message -->
+    <div class="page">
+      <h1>Moments I’ll Treasure Forever 💭</h1>
+      <p>From late-night conversations to all our small inside jokes, every single moment shared with you is a core memory. Thank you for all the shared laughs, the cozy silence, and every adventure in between. Life is so much richer with you by my side.</p>
+    </div>
+
+    <!-- PAGE 4: Text Message -->
+    <div class="page">
+      <h1>Here’s to Your Next Chapter 🌟</h1>
+      <p>As you start another year, my biggest wish for you is boundless happiness, peace of mind, and the confidence to chase every dream you have. May this year bring you all the success, joy, and gentle moments you deserve so deeply.</p>
+    </div>
+
+    <!-- PAGE 5: Text Message -->
+    <div class="page">
+      <h1>Always in Your Corner 🤝</h1>
+      <p>No matter where life takes us or what challenges come up, remember that I am always here to support you, cheer for you, and celebrate every win with you. You’re my favorite partner, my best friend, and my favorite part of every day.</p>
+    </div>
+
+    <!-- PAGE 6: Final Wish + ONLY IMAGE + Confetti Trigger -->
+    <div class="page">
+      <h1>Happy Birthday! ❤️</h1>
+      <!-- REPLACE 'xxxx' IN src WITH YOUR IMAGE FILE OR URL -->
+      <img src="/resources/birthday.png" alt="doodle of Marina" class="image-box">
+      <p>Here’s to another wonderful year around the sun together. I love you more than words can say. Now, let’s go celebrate! 🥳🎉</p>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="nav-controls">
+      <button id="prevBtn" onclick="changePage(-1)" disabled>Back</button>
+      <span class="page-indicator" id="pageIndicator">Page 1 of 6</span>
+      <button id="nextBtn" onclick="changePage(1)">Next ➔</button>
+    </div>
+
+    <!-- HTML5 Audio Player -->
+    <audio id="bg-music" src="/resources/block-of-flats-feat-static-dress.mp3" preload="auto"></audio>
+
+  </div>
+  <script src="script.js"></script>
+
+</body>
+</html>
