@@ -6,7 +6,7 @@
   <title>For you!! ❤️</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Confetti Library -->
+  <!-- PSEUDOCODE: Load the small external library used for confetti bursts. -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 </head>
@@ -14,7 +14,19 @@
 
   <div class="card-container">
 
+    <!-- PSEUDOCODE: Keep the lock screen visible until a valid password unlocks the card. -->
     <div id="lock-screen">
+      <div id="password-celebration" aria-hidden="true">
+        <span class="celebration-balloon celebration-balloon-one"></span>
+        <span class="celebration-balloon celebration-balloon-two"></span>
+        <span class="celebration-balloon celebration-balloon-three"></span>
+        <span class="celebration-balloon celebration-balloon-four"></span>
+        <span class="celebration-balloon celebration-balloon-five"></span>
+        <span class="celebration-spark celebration-spark-one">✦</span>
+        <span class="celebration-spark celebration-spark-two">✧</span>
+        <span class="celebration-spark celebration-spark-three">✦</span>
+        <span class="celebration-spark celebration-spark-four">✧</span>
+      </div>
       <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open birthday envelope" aria-controls="passInput">
         <div class="envelope-back"></div>
         <div class="envelope-letter">
@@ -41,11 +53,13 @@
       </div>
     </div>
 
+    <!-- PSEUDOCODE: Each page is hidden or shown by script as the user moves through the story. -->
     <div class="page active">
       <h1>Happy Birthday Marina!!! 🎉</h1>
       <p>Today is your day, so I made you a tiny birthday adventure to open one page at a time. No big speech to start with—just a reminder that you deserve to feel celebrated, spoiled, and very loved. now..press next to march on our little adventure !!!</p>
     </div>
 
+    <!-- PSEUDOCODE: The final page contains the candle wish interaction. -->
     <div class="page">
       <h1>To My Favorite Person  ✨</h1>
       <p>Somehow, you make being yourself look effortless and unforgettable. I love your warmth, your strange little habits, and the way even a normal day feels better when you are part of it.</p>
@@ -95,19 +109,37 @@
       <h1>Happy Birthday! ❤️</h1>
       <img src="resources/birthday.png" alt="doodle of Marina" class="image-box">
       <p>Here’s to another wonderful year around the sun together. I love you more than words can say. Now, let’s go celebrate! 🥳🎉</p>
-      <div class="wish-scene" id="wishScene" aria-label="Birthday candle">
-        <div class="candle">
-          <span class="candle-flame" aria-hidden="true"></span>
-          <span class="candle-wick" aria-hidden="true"></span>
-          <span class="candle-body" aria-hidden="true"></span>
-          <span class="candle-base" aria-hidden="true"></span>
-          <span class="candle-smoke" aria-hidden="true"></span>
+    </div>
+
+    <div class="page">
+      <h1>Light Up 21 ✨</h1>
+      <p class="game-intro">A birthday cake needs 21 little flames. Light them all to unlock your wish.</p>
+      <!-- PSEUDOCODE: Tap the birthday target 21 times to unlock the final wish. -->
+      <div class="wish-game" id="wishScene" aria-label="21st birthday cake candle game">
+        <div class="wish-game-topline">
+          <span>Candle challenge</span>
+          <strong id="gameScore">0 / 21</strong>
         </div>
+        <div class="wish-game-board" id="wishGameBoard">
+          <span class="game-confetti-dot game-confetti-dot-one" aria-hidden="true"></span>
+          <span class="game-confetti-dot game-confetti-dot-two" aria-hidden="true"></span>
+          <span class="game-confetti-dot game-confetti-dot-three" aria-hidden="true"></span>
+          <div class="birthday-cake" aria-hidden="true">
+            <span class="cake-candle cake-candle-one"></span>
+            <span class="cake-candle cake-candle-two"></span>
+            <span class="cake-candle cake-candle-three"></span>
+            <span class="cake-tier cake-tier-top"></span>
+            <span class="cake-tier cake-tier-bottom"></span>
+            <span class="cake-plate"></span>
+          </div>
+          <button id="wishBtn" class="game-target" type="button" aria-label="Light the next birthday candle">🔥</button>
+        </div>
+        <p id="gamePrompt" class="game-prompt">Tap the flame to light the first candle.</p>
       </div>
-      <button id="wishBtn" class="wish-button" type="button">Make a wish ✨</button>
       <p id="wishMessage" class="wish-message" aria-live="polite" hidden>Wish made. Now come here and let me celebrate you properly 💖</p>
     </div>
 
+    <!-- PSEUDOCODE: Show this dialog only when the user asks to replay the completed card. -->
     <div id="replay-confirmation" class="replay-confirmation" role="dialog" aria-modal="true" aria-labelledby="replayTitle" hidden>
       <span class="replay-sparkle" aria-hidden="true">✦</span>
       <h1 id="replayTitle">Replay our little adventure? 💌</h1>
@@ -118,12 +150,14 @@
       </div>
     </div>
 
+    <!-- PSEUDOCODE: Navigation changes pages and updates the indicator and button states. -->
     <div class="nav-controls">
       <button id="prevBtn" type="button" disabled>Back</button>
-      <span class="page-indicator" id="pageIndicator">Page 1 of 7</span>
+      <span class="page-indicator" id="pageIndicator">Page 1 of 9</span>
       <button id="nextBtn" type="button">Next ➔</button>
     </div>
 
+    <!-- PSEUDOCODE: Keep background and wish audio separate so each can be paused independently. -->
     <audio id="bg-music" src="resources/block-of-flats-feat-static-dress.mp3" preload="auto"></audio>
     <audio id="wish-sound" src="resources/Happy birthday funny song on tik tok.mp3" preload="auto"></audio>
 

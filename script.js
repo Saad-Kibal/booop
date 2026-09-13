@@ -1,9 +1,13 @@
+// PSEUDOCODE: Cache the page elements and shared state used by every interaction.
 let currentPage = 0;
 const pages = document.querySelectorAll('.page');
+const cardContainer = document.querySelector('.card-container');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageIndicator = document.getElementById('pageIndicator');
 const envelope = document.getElementById('envelope');
+const envelopeLetter = document.querySelector('.envelope-letter');
+const passwordCelebration = document.getElementById('password-celebration');
 const passInput = document.getElementById('passInput');
 const unlockBtn = document.getElementById('unlockBtn');
 const lockScreen = document.getElementById('lock-screen');
@@ -12,6 +16,10 @@ const wishSound = document.getElementById('wish-sound');
 const wishBtn = document.getElementById('wishBtn');
 const wishMessage = document.getElementById('wishMessage');
 const wishScene = document.getElementById('wishScene');
+const wishGameBoard = document.getElementById('wishGameBoard');
+const gameScore = document.getElementById('gameScore');
+const gamePrompt = document.getElementById('gamePrompt');
+const gameCandles = document.querySelectorAll('.cake-candle');
 const replayConfirmation = document.getElementById('replay-confirmation');
 const confirmReplay = document.getElementById('confirmReplay');
 const cancelReplay = document.getElementById('cancelReplay');
@@ -25,9 +33,14 @@ const ADMIN_PASSWORD = "birthdaytime123";
 const birthdayStart = new Date(2026, 8, 15, 0, 0, 0);
 let musicPausedForFinalPage = false;
 let musicFadeFrame = null;
+let passwordCelebrationAudioContext = null;
+let passwordCelebrationAudioTimeout = null;
 let wishResumeTimeout = null;
 let celebrationInProgress = false;
+let gameScoreValue = 0;
+const GAME_SCORE_TO_WIN = 21;
 
+// PSEUDOCODE: Calculate the time remaining and refresh each countdown number.
 function updateCountdown() {
   const remainingMilliseconds = Math.max(0, birthdayStart.getTime() - Date.now());
   const totalSeconds = Math.floor(remainingMilliseconds / 1000);
@@ -55,11 +68,13 @@ const pageDecorations = [
   ['🐰', '🤍', '🎁', '🌼'],
   ['🫶', '🎧', '💫', '🍒'],
   ['🌷', '💌', '🫧', '🌸'],
-  ['🎉', '🎂', '🎈', '❤️']
+  ['🎉', '🎂', '🎈', '❤️'],
+  ['🕯️', '🍰', '✨', '🎁']
 ];
 
 const cornerNames = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
+// PSEUDOCODE: Add decorative corner elements to each story page once at startup.
 pages.forEach((page, pageIndex) => {
   page.classList.add(`page-theme-${pageIndex}`);
 
@@ -72,7 +87,13 @@ pages.forEach((page, pageIndex) => {
   });
 });
 
+// PSEUDOCODE: Mark the current page active, animate the page turn, and sync controls/audio.
 function updatePages(direction = 1, previousPage = null) {
+  // PSEUDOCODE: Clear any horizontal scroll created while a page-turn animation is focused.
+  if (cardContainer) {
+    cardContainer.scrollLeft = 0;
+  }
+
   pages.forEach((page, index) => {
     page.classList.remove('page-flip-in-next', 'page-flip-in-prev', 'page-flip-out-next', 'page-flip-out-prev');
 
@@ -97,7 +118,7 @@ function updatePages(direction = 1, previousPage = null) {
   const isFinalPage = currentPage === pages.length - 1;
   const wishWasMade = wishScene?.classList.contains('wished');
 
-  // Update button labels & states
+  // PSEUDOCODE: Disable unavailable navigation and label the next action.
   prevBtn.disabled = currentPage === 0;
   nextBtn.disabled = isFinalPage && !wishWasMade;
   if (isFinalPage) {
@@ -106,18 +127,17 @@ function updatePages(direction = 1, previousPage = null) {
     nextBtn.innerText = "Next ➔";
   }
 
-  // Update page numbers
   pageIndicator.innerText = `Page ${currentPage + 1} of ${pages.length}`;
 
-  // Trigger Confetti on last page
+  // PSEUDOCODE: Pause background music for the game and resume it elsewhere.
   if (currentPage === pages.length - 1) {
     pauseMusicForFinalPage();
-    launchConfetti();
   } else if (!celebrationInProgress) {
     resumeBackgroundMusic();
   }
 }
 
+// PSEUDOCODE: Move one page, wrap replay back to the beginning, then redraw the story.
 function changePage(direction) {
   const previousPage = pages[currentPage];
 
@@ -166,22 +186,137 @@ function closeBirthdayPage() {
   setTimeout(() => window.location.replace('about:blank'), 350);
 }
 
-function openEnvelope() {
+// PSEUDOCODE: Open the envelope and focus the password field after its animation.
+function openEnvelope(event) {
   if (!envelope || envelope.classList.contains('opened')) {
     return;
   }
 
   envelope.classList.add('opened');
+  event?.stopPropagation();
   setTimeout(() => passInput?.focus(), 700);
+}
+
+// PSEUDOCODE: Accept either the birthday password or the administrator password.
+function isAcceptedPassword(input) {
+  return input === SECRET_PASSWORD || input === ADMIN_PASSWORD;
+}
+
+// PSEUDOCODE: Close the envelope whenever the user clicks outside its letter.
+function closeEnvelope() {
+  envelope?.classList.remove('opened');
+}
+
+// PSEUDOCODE: Stop any password celebration audio and release its audio context.
+function stopPasswordCelebrationSound() {
+  if (passwordCelebrationAudioTimeout !== null) {
+    clearTimeout(passwordCelebrationAudioTimeout);
+    passwordCelebrationAudioTimeout = null;
+  }
+
+  if (passwordCelebrationAudioContext) {
+    passwordCelebrationAudioContext.close();
+    passwordCelebrationAudioContext = null;
+  }
+}
+
+// PSEUDOCODE: Build a short original melody from browser-generated tones and chimes.
+function playPasswordCelebrationSound() {
+  stopPasswordCelebrationSound();
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) {
+    return;
+  }
+
+  const audioContext = new AudioContext();
+  const masterGain = audioContext.createGain();
+  const compressor = audioContext.createDynamicsCompressor();
+  const startTime = audioContext.currentTime + 0.04;
+  const melody = [
+    [523.25, 0], [659.25, 0.2], [783.99, 0.4], [1046.5, 0.65],
+    [880, 1.05], [1046.5, 1.25], [1318.5, 1.45], [1568, 1.8],
+    [1318.5, 2.25], [1046.5, 2.5], [1318.5, 2.75], [1760, 3.1],
+    [1568, 3.55], [1318.5, 3.8], [1046.5, 4.05], [2093, 4.45]
+  ];
+
+  passwordCelebrationAudioContext = audioContext;
+  masterGain.gain.setValueAtTime(0.0001, startTime);
+  masterGain.gain.exponentialRampToValueAtTime(0.32, startTime + 0.12);
+  masterGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 5.8);
+  compressor.threshold.value = -18;
+  compressor.knee.value = 12;
+  compressor.ratio.value = 4;
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.25;
+  masterGain.connect(compressor).connect(audioContext.destination);
+
+  const playTone = (frequency, offset, duration, type, volume) => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const noteTime = startTime + offset;
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, noteTime);
+    gain.gain.setValueAtTime(0.0001, noteTime);
+    gain.gain.exponentialRampToValueAtTime(volume, noteTime + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, noteTime + duration);
+    oscillator.connect(gain).connect(masterGain);
+    oscillator.start(noteTime);
+    oscillator.stop(noteTime + duration + 0.05);
+  };
+
+  melody.forEach(([frequency, offset], index) => {
+    playTone(frequency, offset, 0.42, index % 3 === 0 ? 'triangle' : 'sine', 0.22);
+    playTone(frequency / 2, offset, 0.55, 'sine', 0.06);
+  });
+
+  [0.65, 1.8, 3.1, 4.45].forEach((offset, index) => {
+    playTone([1318.5, 1568, 1760, 2093][index], offset, 1.1, 'sine', 0.12);
+    playTone([1568, 2093, 2349, 2637][index], offset + 0.06, 0.85, 'sine', 0.07);
+  });
+
+  audioContext.resume().catch(() => {});
+  passwordCelebrationAudioTimeout = setTimeout(() => {
+    audioContext.close();
+    passwordCelebrationAudioContext = null;
+    passwordCelebrationAudioTimeout = null;
+  }, 6500);
+}
+
+// PSEUDOCODE: Color the password and trigger celebration only when the value becomes valid.
+function updatePasswordColor() {
+  const input = passInput.value.trim();
+  const isCorrect = isAcceptedPassword(input);
+  const wasCorrect = passInput.classList.contains('password-correct');
+
+  passInput.classList.toggle('password-correct', isCorrect);
+  passwordCelebration?.classList.toggle('active', isCorrect);
+
+  if (isCorrect && !wasCorrect) {
+    launchConfetti();
+    playPasswordCelebrationSound();
+  } else if (!isCorrect && wasCorrect) {
+    stopPasswordCelebrationSound();
+  }
+}
+
+function handleOutsideEnvelopeClick(event) {
+  if (!envelope?.classList.contains('opened') || envelopeLetter?.contains(event.target)) {
+    return;
+  }
+
+  closeEnvelope();
 }
 
 function handleEnvelopeKeydown(event) {
   if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
-    openEnvelope();
+    openEnvelope(event);
   }
 }
 
+// PSEUDOCODE: Fade out background music while the final page celebration is active.
 function pauseMusicForFinalPage() {
   if (!bgMusic || bgMusic.paused || musicPausedForFinalPage) {
     return;
@@ -209,6 +344,7 @@ function pauseMusicForFinalPage() {
   musicFadeFrame = requestAnimationFrame(fadeOut);
 }
 
+// PSEUDOCODE: Restore background music after leaving the final page or wish scene.
 function resumeBackgroundMusic() {
   if (!bgMusic || !musicPausedForFinalPage) {
     return;
@@ -236,6 +372,7 @@ function resumeMusicAfterWishSound() {
   }, 3000);
 }
 
+// PSEUDOCODE: Fire confetti from both sides for a fixed celebration window.
 function launchConfetti() {
   const duration = 3 * 1000;
   const end = Date.now() + duration;
@@ -260,6 +397,7 @@ function launchConfetti() {
   }());
 }
 
+// PSEUDOCODE: Play the final-page applause and spoken birthday greeting.
 function playCelebrationSound(onComplete) {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -347,6 +485,7 @@ function playCelebrationSound(onComplete) {
   setTimeout(() => audioContext.close(), greetingDelay + 1800);
 }
 
+// PSEUDOCODE: Mark the wish as made, blow out the candle, and start the final celebration.
 function makeWish() {
   if (!wishBtn || !wishMessage) {
     return;
@@ -354,10 +493,15 @@ function makeWish() {
 
   wishMessage.hidden = false;
   wishScene?.classList.add('wished');
+  wishScene?.classList.add('wish-complete');
+  wishBtn.style.left = 'auto';
+  wishBtn.style.right = '12px';
+  wishBtn.style.top = '12px';
+  wishBtn.setAttribute('aria-label', 'Wish sent');
   document.body.classList.add('candle-out');
   celebrationInProgress = true;
   wishBtn.disabled = true;
-  wishBtn.innerText = "Wish sent 💖";
+  wishBtn.innerText = "Wish\nsent 💖";
   nextBtn.disabled = false;
   nextBtn.innerText = "Replay 🎉";
   if (wishSound) {
@@ -377,6 +521,65 @@ function makeWish() {
   launchConfetti();
 }
 
+// PSEUDOCODE: Move the sparkle target to a new safe spot inside the game board.
+function moveGameTarget() {
+  const targetSize = wishBtn.offsetWidth;
+  const boardWidth = wishGameBoard.clientWidth;
+  const boardHeight = wishGameBoard.clientHeight;
+  const horizontalPosition = Math.random() * Math.max(0, boardWidth - targetSize);
+  const verticalPosition = Math.random() * Math.max(0, boardHeight - targetSize - 82);
+
+  wishBtn.style.left = `${horizontalPosition}px`;
+  wishBtn.style.top = `${verticalPosition}px`;
+}
+
+// PSEUDOCODE: Extinguish one more cake candle at each third of the challenge and darken the board.
+function updateGameVisuals() {
+  const progress = gameScoreValue / GAME_SCORE_TO_WIN;
+  const extinguishedCandles = Math.floor(progress * gameCandles.length + 0.0001);
+
+  gameCandles.forEach((candle, candleIndex) => {
+    candle.classList.toggle('candle-off', candleIndex < extinguishedCandles);
+  });
+  wishGameBoard.style.setProperty('--game-darkness', (progress * 0.62).toFixed(2));
+}
+
+// PSEUDOCODE: Count a successful tap and trigger the real wish only at 21.
+function collectSparkle() {
+  if (gameScoreValue >= GAME_SCORE_TO_WIN || !wishGameBoard) {
+    return;
+  }
+
+  gameScoreValue += 1;
+  wishBtn.blur();
+  if (cardContainer) {
+    cardContainer.scrollLeft = 0;
+  }
+  gameScore.textContent = `${gameScoreValue} / ${GAME_SCORE_TO_WIN}`;
+  updateGameVisuals();
+  wishGameBoard.classList.remove('target-hit');
+  void wishGameBoard.offsetWidth;
+  wishGameBoard.classList.add('target-hit');
+
+  if (gameScoreValue === GAME_SCORE_TO_WIN) {
+    wishBtn.disabled = true;
+    gamePrompt.textContent = 'You found all 21. Make your wish! 🎉';
+    makeWish();
+    return;
+  }
+
+  gamePrompt.textContent = gameScoreValue >= 14
+    ? 'Almost there... the birthday magic is building!'
+    : 'Catch it again! The 21st sparkle is waiting...';
+  moveGameTarget();
+  if (cardContainer) {
+    requestAnimationFrame(() => {
+      cardContainer.scrollLeft = 0;
+    });
+  }
+}
+
+// PSEUDOCODE: Restore the game, message, audio, and controls for replay.
 function resetWish() {
   window.speechSynthesis?.cancel();
   if (wishResumeTimeout !== null) {
@@ -391,6 +594,7 @@ function resetWish() {
   celebrationInProgress = false;
   document.body.classList.remove('candle-out');
   wishScene?.classList.remove('wished');
+  wishScene?.classList.remove('wish-complete');
 
   if (wishMessage) {
     wishMessage.hidden = true;
@@ -398,18 +602,29 @@ function resetWish() {
 
   if (wishBtn) {
     wishBtn.disabled = false;
-    wishBtn.innerText = "Make a wish ✨";
+    wishBtn.innerText = "🔥";
+    wishBtn.setAttribute('aria-label', 'Light the next birthday candle');
+    wishBtn.style.left = '';
+    wishBtn.style.right = '';
+    wishBtn.style.top = '';
   }
+
+  gameScoreValue = 0;
+  gameScore.textContent = `0 / ${GAME_SCORE_TO_WIN}`;
+  gamePrompt.textContent = 'Tap the flame to light the first candle.';
+  updateGameVisuals();
+  moveGameTarget();
 
   resumeBackgroundMusic();
 }
 
+// PSEUDOCODE: Validate the password, then fade the lock screen into the birthday card.
 function unlockCard() {
   const input = passInput.value.trim();
   const errorMsg = document.getElementById('errorMsg');
   const isAdmin = input === ADMIN_PASSWORD;
 
-  if (input === SECRET_PASSWORD || isAdmin) {
+  if (isAcceptedPassword(input)) {
     if (!isAdmin && Date.now() < birthdayStart.getTime()) {
       if (errorMsg) {
         errorMsg.innerText = "The letter opens when the countdown reaches zero..wait a little :3 ❤️";
@@ -441,12 +656,15 @@ function unlockCard() {
   }
 }
 
+// PSEUDOCODE: Connect buttons, keyboard input, password effects, and replay actions.
 prevBtn.addEventListener('click', () => changePage(-1));
 nextBtn.addEventListener('click', handleNextClick);
 envelope.addEventListener('click', openEnvelope);
 envelope.addEventListener('keydown', handleEnvelopeKeydown);
+document.addEventListener('click', handleOutsideEnvelopeClick);
 unlockBtn.addEventListener('click', unlockCard);
-wishBtn?.addEventListener('click', makeWish);
+passInput.addEventListener('input', updatePasswordColor);
+wishBtn?.addEventListener('click', collectSparkle);
 confirmReplay?.addEventListener('click', () => {
   hideReplayConfirmation();
   changePage(1);
@@ -458,4 +676,6 @@ passInput.addEventListener('keyup', function(event) {
   }
 });
 
+moveGameTarget();
+updateGameVisuals();
 updatePages();
