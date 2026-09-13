@@ -194,7 +194,7 @@ function openEnvelope(event) {
 
   envelope.classList.add('opened');
   event?.stopPropagation();
-  setTimeout(() => passInput?.focus(), 700);
+  setTimeout(() => passInput?.focus(), 1100);
 }
 
 // PSEUDOCODE: Accept either the birthday password or the administrator password.
