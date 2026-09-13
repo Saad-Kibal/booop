@@ -633,6 +633,28 @@ function resetWish() {
   resumeBackgroundMusic();
 }
 
+// PSEUDOCODE: Start the background track halfway through once its duration is known.
+function startBackgroundMusicFromMiddle() {
+  if (!bgMusic) {
+    return;
+  }
+
+  const setMiddlePoint = () => {
+    if (Number.isFinite(bgMusic.duration) && bgMusic.duration > 0) {
+      bgMusic.currentTime = bgMusic.duration / 2;
+    }
+  };
+
+  if (Number.isFinite(bgMusic.duration) && bgMusic.duration > 0) {
+    setMiddlePoint();
+  } else {
+    bgMusic.addEventListener('loadedmetadata', setMiddlePoint, { once: true });
+  }
+
+  bgMusic.volume = 0.3;
+  bgMusic.play().catch(err => console.log("Audio playback error:", err));
+}
+
 // PSEUDOCODE: Validate the password, then fade the lock screen into the birthday card.
 function unlockCard() {
   const input = passInput.value.trim();
@@ -649,10 +671,7 @@ function unlockCard() {
 
     document.body.classList.add('birthday-mode');
 
-    if (bgMusic) {
-      bgMusic.volume = 0.3;
-        bgMusic.play().catch(err => console.log("Audio playback error:", err));
-    }
+    startBackgroundMusicFromMiddle();
 
     if (lockScreen) {
       lockScreen.classList.add("opening");
