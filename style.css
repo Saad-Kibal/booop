@@ -5,13 +5,15 @@
   --text: #4a4a4a;
   --muted: #888;
   --card-radius: 24px;
+  --body-font: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --display-font: 'Comic Sans MS', 'Segoe Print', 'Bradley Hand', cursive;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--body-font);
 }
 
 /* PSEUDOCODE: Center the card and provide the soft background seen before unlocking. */
@@ -89,6 +91,12 @@ body:not(.birthday-mode) .nav-controls {
   text-align: center;
   background: transparent;
   border-radius: var(--card-radius);
+}
+
+/* Keep the password screen's original clear, neutral typography. */
+#lock-screen,
+#lock-screen * {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* PSEUDOCODE: Keep balloons, sparkles, and confetti visuals behind the envelope. */
@@ -518,6 +526,7 @@ body:not(.birthday-mode) .nav-controls {
 
 h1 {
       color: var(--accent);
+  font-family: var(--display-font);
       font-size: 1.8rem;
       margin-bottom: 20px;
     }
@@ -852,9 +861,9 @@ button {
   right: 12px !important;
   left: auto !important;
   z-index: 10;
-  width: 72px;
-  height: 72px;
-  min-height: 72px;
+  width: 64px;
+  height: 64px;
+  min-height: 64px;
   border-radius: 50%;
   border: 3px solid #fff0ad;
   background:
@@ -862,11 +871,12 @@ button {
     linear-gradient(145deg, #ff9db2, #ef6680 58%, #bd304b);
   color: #fff;
   font-family: "Comic Sans MS", "Segoe Print", "Bradley Hand", cursive;
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   line-height: 1.15;
   white-space: pre-line;
+  animation: wishSentFloat 1.8s ease-in-out infinite !important;
   transform: none !important;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.86), 0 0 0 6px rgba(229, 161, 47, 0.28), 0 7px 17px rgba(189, 48, 75, 0.5);
 }
@@ -879,6 +889,7 @@ button {
   font-size: 0.78rem;
   line-height: 1;
   text-shadow: 0 1px 4px rgba(189, 48, 75, 0.3);
+  animation: wishSentTwinkle 1.15s ease-in-out infinite alternate;
 }
 
 .wish-game.wish-complete .game-target::before {
@@ -891,6 +902,17 @@ button {
   right: 11px;
   bottom: 9px;
   content: "♡";
+  animation-delay: -0.55s;
+}
+
+@keyframes wishSentFloat {
+  0%, 100% { transform: translateY(0) scale(1) !important; }
+  50% { transform: translateY(-4px) scale(1.05) !important; }
+}
+
+@keyframes wishSentTwinkle {
+  from { opacity: 0.55; transform: scale(0.8) rotate(-8deg); }
+  to { opacity: 1; transform: scale(1.2) rotate(8deg); }
 }
 
 .wish-game-board.target-hit .game-target {
