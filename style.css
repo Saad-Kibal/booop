@@ -288,16 +288,26 @@ body:not(.birthday-mode) .nav-controls {
         z-index: 6;
         top: 43%;
         left: 50%;
+        display: grid;
+        place-items: center;
+        width: 62px;
+        height: 62px;
+        border: 3px dashed rgba(255, 244, 237, 0.9);
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.3), transparent 34%), rgba(189, 48, 75, 0.82);
         color: #fff4ed;
         font-size: 2.4rem;
         line-height: 1;
         text-shadow: 0 3px 8px rgba(91, 19, 35, 0.25);
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) rotate(-7deg);
+        transform-origin: center;
         pointer-events: none;
-        transition: opacity 0.25s ease;
+        transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease 0.35s;
       }
 
-    .envelope.opened .envelope-heart {
+    .envelope.opened .envelope-heart,
+    #lock-screen.opening .envelope-heart {
+        transform: translate(-50%, -145%) rotate(24deg) scale(0.35);
         opacity: 0;
       }
 
