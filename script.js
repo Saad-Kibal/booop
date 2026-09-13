@@ -184,7 +184,10 @@ function hideReplayConfirmation() {
 
 function closeBirthdayPage() {
   document.body.classList.add('closing-card');
-  setTimeout(() => window.location.replace('about:blank'), 350);
+  setTimeout(() => {
+    window.open('', '_self');
+    window.close();
+  }, 350);
 }
 
 // PSEUDOCODE: Open the envelope and focus the password field after its animation.
