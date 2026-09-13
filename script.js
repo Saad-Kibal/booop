@@ -633,7 +633,7 @@ function resetWish() {
   resumeBackgroundMusic();
 }
 
-// PSEUDOCODE: Start the background track halfway through once its duration is known.
+// PSEUDOCODE: Start the background track one quarter through once its duration is known.
 function startBackgroundMusicFromMiddle() {
   if (!bgMusic) {
     return;
@@ -641,7 +641,7 @@ function startBackgroundMusicFromMiddle() {
 
   const setMiddlePoint = () => {
     if (Number.isFinite(bgMusic.duration) && bgMusic.duration > 0) {
-      bgMusic.currentTime = bgMusic.duration / 2;
+      bgMusic.currentTime = bgMusic.duration / 4;
     }
   };
 
