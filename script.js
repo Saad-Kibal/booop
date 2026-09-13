@@ -19,6 +19,7 @@ const wishScene = document.getElementById('wishScene');
 const wishGameBoard = document.getElementById('wishGameBoard');
 const gameScore = document.getElementById('gameScore');
 const gamePrompt = document.getElementById('gamePrompt');
+const gameTapHint = document.getElementById('gameTapHint');
 const gameCandles = document.querySelectorAll('.cake-candle');
 const replayConfirmation = document.getElementById('replay-confirmation');
 const confirmReplay = document.getElementById('confirmReplay');
@@ -528,9 +529,16 @@ function moveGameTarget() {
   const boardHeight = wishGameBoard.clientHeight;
   const horizontalPosition = Math.random() * Math.max(0, boardWidth - targetSize);
   const verticalPosition = Math.random() * Math.max(0, boardHeight - targetSize - 82);
+  const hintWidth = gameTapHint.offsetWidth || 100;
+  const hintCenter = Math.min(
+    Math.max(horizontalPosition + targetSize / 2, hintWidth / 2 + 4),
+    boardWidth - hintWidth / 2 - 4
+  );
 
   wishBtn.style.left = `${horizontalPosition}px`;
   wishBtn.style.top = `${verticalPosition}px`;
+  gameTapHint.style.left = `${hintCenter}px`;
+  gameTapHint.style.top = `${verticalPosition + targetSize + 5}px`;
 }
 
 // PSEUDOCODE: Extinguish one more cake candle at each third of the challenge and darken the board.
@@ -556,6 +564,9 @@ function collectSparkle() {
     cardContainer.scrollLeft = 0;
   }
   gameScore.textContent = `${gameScoreValue} / ${GAME_SCORE_TO_WIN}`;
+  if (gameScoreValue >= 2) {
+    wishGameBoard.classList.remove('hint-active');
+  }
   updateGameVisuals();
   wishGameBoard.classList.remove('target-hit');
   void wishGameBoard.offsetWidth;
@@ -612,6 +623,7 @@ function resetWish() {
   gameScoreValue = 0;
   gameScore.textContent = `0 / ${GAME_SCORE_TO_WIN}`;
   gamePrompt.textContent = 'Tap the flame to blow out the first candle.';
+  wishGameBoard.classList.add('hint-active');
   updateGameVisuals();
   moveGameTarget();
 

@@ -953,6 +953,35 @@ button {
   transform: rotate(8deg) scale(1.08);
 }
 
+.game-tap-hint {
+  position: absolute;
+  z-index: 4;
+  display: none;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: #fff8d6;
+  color: #bd304b;
+  font-family: var(--display-font);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(126, 42, 54, 0.2);
+}
+
+.wish-game-board.hint-active .game-tap-hint {
+  display: block;
+  animation: tapHintPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes tapHintPulse {
+  from { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+  to { opacity: 1; transform: translateX(-50%) translateY(-3px); }
+}
+
 .wish-game.wish-complete .game-target {
   top: 12px !important;
   right: 12px !important;
@@ -1266,6 +1295,49 @@ body.candle-out .page-theme-8 .wish-message {
   color: #ffd6a5;
 }
 
+/* PSEUDOCODE: Keep applause behind the card, then animate it around the darkened scene. */
+#applause-celebration {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+body.candle-out #applause-celebration {
+  opacity: 1;
+}
+
+.applause-hand {
+  position: absolute;
+  display: block;
+  padding: 4px;
+  border: 2px solid rgba(255, 218, 126, 0.9);
+  border-radius: 50%;
+  background: rgba(42, 41, 67, 0.78);
+  color: #fff;
+  font-size: clamp(1.5rem, 4vw, 2.7rem);
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(255, 207, 112, 0.52));
+  animation: applauseBounce 1.1s ease-in-out infinite;
+}
+
+.applause-hand-one { top: 13%; left: 8%; animation-delay: -0.1s; }
+.applause-hand-two { top: 28%; left: 3%; animation-delay: -0.7s; }
+.applause-hand-three { bottom: 22%; left: 8%; animation-delay: -0.4s; }
+.applause-hand-four { bottom: 8%; left: 22%; animation-delay: -0.9s; }
+.applause-hand-five { top: 14%; right: 8%; animation-delay: -0.55s; }
+.applause-hand-six { top: 31%; right: 3%; animation-delay: -0.2s; }
+.applause-hand-seven { right: 9%; bottom: 22%; animation-delay: -0.8s; }
+.applause-hand-eight { right: 22%; bottom: 8%; animation-delay: -0.35s; }
+
+@keyframes applauseBounce {
+  0%, 100% { transform: translateY(0) rotate(-8deg) scale(0.92); opacity: 0.72; }
+  50% { transform: translateY(-12px) rotate(8deg) scale(1.08); opacity: 1; }
+}
+
 body.closing-card {
   opacity: 0;
   transition: opacity 0.35s ease;
@@ -1432,6 +1504,21 @@ button:focus-visible,
     font-size: 0.8rem;
   }
 
+  .applause-hand {
+    z-index: 1000;
+    padding: 3px;
+    font-size: 1.2rem;
+  }
+
+  .applause-hand-one { top: 17%; left: 10px; }
+  .applause-hand-two { top: 43%; left: 5px; }
+  .applause-hand-three { bottom: 21%; left: 10px; }
+  .applause-hand-four { bottom: 5%; left: 17%; }
+  .applause-hand-five { top: 17%; right: 10px; }
+  .applause-hand-six { top: 43%; right: 5px; }
+  .applause-hand-seven { right: 10px; bottom: 21%; }
+  .applause-hand-eight { right: 17%; bottom: 5%; }
+
   button {
     padding: 10px 16px;
   }
@@ -1453,6 +1540,7 @@ button:focus-visible,
   .celebration-balloon,
   .celebration-spark,
   .game-target,
+  .applause-hand,
   .candle-flame,
   .replay-sparkle {
     animation-duration: 0.01ms;

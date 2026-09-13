@@ -125,7 +125,7 @@
           <span>Candle challenge</span>
           <strong id="gameScore">0 / 21</strong>
         </div>
-        <div class="wish-game-board" id="wishGameBoard">
+        <div class="wish-game-board hint-active" id="wishGameBoard">
           <span class="game-confetti-dot game-confetti-dot-one" aria-hidden="true"></span>
           <span class="game-confetti-dot game-confetti-dot-two" aria-hidden="true"></span>
           <span class="game-confetti-dot game-confetti-dot-three" aria-hidden="true"></span>
@@ -137,6 +137,7 @@
             <span class="cake-tier cake-tier-bottom"></span>
             <span class="cake-plate"></span>
           </div>
+          <span class="game-tap-hint" id="gameTapHint" aria-hidden="true">Tap the flame 👆</span>
           <button id="wishBtn" class="game-target" type="button" aria-label="Blow out the next birthday candle">🔥</button>
         </div>
         <p id="gamePrompt" class="game-prompt">Tap the flame to blow out the first candle.</p>
@@ -166,6 +167,18 @@
     <audio id="bg-music" src="resources/block-of-flats-feat-static-dress.mp3" preload="auto"></audio>
     <audio id="wish-sound" src="resources/Happy birthday funny song on tik tok.mp3" preload="auto"></audio>
 
+  </div>
+
+  <!-- PSEUDOCODE: Reveal a continuous applause ring only after the candle game is won. -->
+  <div id="applause-celebration" aria-hidden="true">
+    <span class="applause-hand applause-hand-one">👏</span>
+    <span class="applause-hand applause-hand-two">👏</span>
+    <span class="applause-hand applause-hand-three">👏</span>
+    <span class="applause-hand applause-hand-four">👏</span>
+    <span class="applause-hand applause-hand-five">👏</span>
+    <span class="applause-hand applause-hand-six">👏</span>
+    <span class="applause-hand applause-hand-seven">👏</span>
+    <span class="applause-hand applause-hand-eight">👏</span>
   </div>
   <script src="script.js"></script>
 
