@@ -627,17 +627,71 @@ p {
   line-height: 1.35;
 }
 
+  .image-frame {
+        position: relative;
+        width: min(80%, 230px);
+        padding: 8px 8px 27px;
+        margin: 10px auto 15px;
+        background: #fffdf8;
+        border: 1px solid rgba(201, 47, 105, 0.14);
+        border-radius: 5px;
+        box-shadow: 0 9px 20px rgba(126, 42, 54, 0.17), 0 0 0 5px rgba(255, 255, 255, 0.52);
+        transform: rotate(-2deg);
+      }
+
+  .image-frame::before,
+  .image-frame::after {
+        position: absolute;
+        z-index: 2;
+        width: 42px;
+        height: 10px;
+        background: rgba(255, 218, 126, 0.82);
+        content: "";
+        transform: rotate(-13deg);
+      }
+
+  .image-frame::before {
+        top: -5px;
+        left: 22px;
+      }
+
+  .image-frame::after {
+        right: 20px;
+        bottom: 20px;
+        transform: rotate(14deg);
+      }
+
   .image-box {
-        width: auto;
-        max-width: 80%;
+        width: 100%;
         max-height: 180px;
         object-fit: contain;
-        margin: 10px auto 15px;
         display: block;
-        border-radius: 16px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        border: 3px solid #fff;
-        }
+        border-radius: 3px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      }
+
+  .frame-sparkle {
+        position: absolute;
+        z-index: 3;
+        color: #e5a12f;
+        font-size: 1.2rem;
+        text-shadow: 0 1px 4px rgba(229, 161, 47, 0.3);
+      }
+
+  .frame-sparkle-left { top: 30px; left: -17px; }
+  .frame-sparkle-right { right: -15px; bottom: 40px; }
+
+  .frame-caption {
+        position: absolute;
+        right: 0;
+        bottom: 6px;
+        left: 0;
+        color: #c92f69;
+        font-family: var(--display-font);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-align: center;
+      }
 
   /* PSEUDOCODE: Pin navigation to the bottom without affecting page content flow. */
   .nav-controls {
