@@ -603,7 +603,7 @@ function resetWish() {
   if (wishBtn) {
     wishBtn.disabled = false;
     wishBtn.innerText = "🔥";
-    wishBtn.setAttribute('aria-label', 'Light the next birthday candle');
+    wishBtn.setAttribute('aria-label', 'Blow out the next birthday candle');
     wishBtn.style.left = '';
     wishBtn.style.right = '';
     wishBtn.style.top = '';
@@ -611,7 +611,7 @@ function resetWish() {
 
   gameScoreValue = 0;
   gameScore.textContent = `0 / ${GAME_SCORE_TO_WIN}`;
-  gamePrompt.textContent = 'Tap the flame to light the first candle.';
+  gamePrompt.textContent = 'Tap the flame to blow out the first candle.';
   updateGameVisuals();
   moveGameTarget();
 
