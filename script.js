@@ -509,6 +509,7 @@ function makeWish() {
   nextBtn.disabled = false;
   nextBtn.innerText = "Replay 🎉";
   if (wishSound) {
+    wishSound.volume = 0.5;
     wishSound.currentTime = 0;
     wishSound.onended = () => {
       wishSound.onended = null;
